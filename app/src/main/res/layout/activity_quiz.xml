@@ -53,19 +53,19 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <Button
+        <ImageButton
             android:id="@+id/prev_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/prev_button"/>
+            android:src="@mipmap/arrow_left"
+            android:contentDescription="이전 질문으로 가는 버튼입니다."/>
 
-        <Button
+        <ImageButton
             android:id="@+id/next_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/next_button"
-            android:drawableRight="@mipmap/arrow_right"
-            android:drawablePadding="4dp"/>
+            android:src="@mipmap/arrow_right"
+            android:contentDescription="다음 질문으로 가는 버튼입니다."/>
 
     </LinearLayout>
 
