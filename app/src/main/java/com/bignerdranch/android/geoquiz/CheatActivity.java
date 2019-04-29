@@ -12,8 +12,10 @@ public class CheatActivity extends AppCompatActivity {
 
     private static final String EXTRA_ANSWER_IS_TRUE = "com.bignerdranch.android.geoquiz.answer_is_true";
     private static final String EXTRA_ANSWER_SHOWN = "com.bignerdranch.android.geoquiz.answer_shown";
+    private static final String KEY_INDEX = "index";
 
     private boolean mAnswerIsTrue;
+    private boolean mIsAnswerShown;
 
     private TextView mAnswerTextView;
     private Button mShowAnswer;
@@ -48,8 +50,22 @@ public class CheatActivity extends AppCompatActivity {
                 }
 
                 setAnswerShownResult(true);
+                mIsAnswerShown = true;
             }
         });
+
+        if (savedInstanceState != null) {
+            mIsAnswerShown = savedInstanceState.getBoolean(KEY_INDEX, false);
+            if (mIsAnswerShown == true) {
+                setAnswerShownResult(mIsAnswerShown);
+            }
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(KEY_INDEX, mIsAnswerShown);
     }
 
     private void setAnswerShownResult(boolean isAnswerShwon) {
