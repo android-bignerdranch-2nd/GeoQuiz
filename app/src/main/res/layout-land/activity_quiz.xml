@@ -48,28 +48,27 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <ImageButton
+        android:id="@+id/prev_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="이전 질문으로 가는 버튼입니다."
+        android:layout_gravity="bottom|left"
+        android:src="@mipmap/arrow_left" />
+
+    <Button
+        android:id="@+id/cheat_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:text="@string/cheat_button"/>
+
+    <ImageButton
+        android:id="@+id/next_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/prev_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="이전 질문으로 가는 버튼입니다."
-
-            android:src="@mipmap/arrow_left" />
-
-        <ImageButton
-            android:id="@+id/next_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="다음 질문으로 가는 버튼입니다."
-
-            android:src="@mipmap/arrow_right" />
-
-    </LinearLayout>
+        android:contentDescription="다음 질문으로 가는 버튼입니다."
+        android:src="@mipmap/arrow_right" />
 
 </FrameLayout>
