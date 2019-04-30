@@ -15,11 +15,15 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+
 public class QuizActivity extends AppCompatActivity {
 
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
     private static final String KEY_INDEX_IS_CHEATER = "cheater_index";
+    private static final String KEY_INDEX_OF_CHEATED = "cheated_indexs";
     private static final int REQUEST_CODE_CHEAT = 0;
 
 
@@ -30,7 +34,8 @@ public class QuizActivity extends AppCompatActivity {
     private TextView mQuestionTextView;
     private Button mCheatButton;
 
-
+    // TODO : mCheatedIndexs를 HashSet으로 사용하고 싶은데.. HashSet은 bundle에 어떻게 저장하지 ?
+    ArrayList<Integer> mCheatedIndexs = new ArrayList<Integer>();
 
     private Question[] mQuestionBank = new Question[] {
             new Question(R.string.question_oceans, true),
@@ -46,6 +51,13 @@ public class QuizActivity extends AppCompatActivity {
     private void updateQuestion() {
         int question = mQuestionBank[mCurrentIndex].getTextResId();
         mQuestionTextView.setText(question);
+    }
+
+    private boolean checkIsCheatedIndex(Integer index) {
+        if (mCheatedIndexs.contains(index)) {
+            return true;
+        }
+        return false;
     }
 
     private void checkAnswer(boolean userPressedTrue) {
@@ -106,7 +118,13 @@ public class QuizActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+                Integer nextIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+                if (checkIsCheatedIndex(nextIndex)) {
+                    Toast.makeText(QuizActivity.this, R.string.cheated_index, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                mCurrentIndex = nextIndex;
                 mIsCheater = false;
                 updateQuestion();
             }
@@ -116,7 +134,13 @@ public class QuizActivity extends AppCompatActivity {
         mPrevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mCurrentIndex = (mCurrentIndex - 1 + mQuestionBank.length) % mQuestionBank.length;
+
+                Integer prevIndex = (mCurrentIndex - 1 + mQuestionBank.length) % mQuestionBank.length;
+                if (checkIsCheatedIndex(prevIndex)) {
+                    Toast.makeText(QuizActivity.this, R.string.cheated_index, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                mCurrentIndex = prevIndex;
                 mIsCheater = false;
                 updateQuestion();
             }
@@ -125,17 +149,16 @@ public class QuizActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
             mIsCheater = savedInstanceState.getBoolean(KEY_INDEX_IS_CHEATER, false);
+            mCheatedIndexs = savedInstanceState.getIntegerArrayList(KEY_INDEX_OF_CHEATED);
         }
 
         mCheatButton = (Button)findViewById(R.id.cheat_button);
         mCheatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent i = new Intent(QuizActivity.this, CheatActivity.class);
                 boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
                 Intent i = CheatActivity.newIntent(QuizActivity.this, answerIsTrue);
 
-//                startActivity(i);
                 startActivityForResult(i, REQUEST_CODE_CHEAT);
             }
         });
@@ -156,6 +179,10 @@ public class QuizActivity extends AppCompatActivity {
                 return;
             }
             mIsCheater = CheatActivity.wasAnswerShown(data);
+
+            if (mIsCheater == true) {
+                mCheatedIndexs.add(mCurrentIndex);
+            }
         }
     }
 
@@ -165,6 +192,8 @@ public class QuizActivity extends AppCompatActivity {
         Log.i(TAG, "onSaveInstanceState");
         outState.putInt(KEY_INDEX, mCurrentIndex);
         outState.putBoolean(KEY_INDEX_IS_CHEATER, mIsCheater);
+        outState.putIntegerArrayList(KEY_INDEX_OF_CHEATED, mCheatedIndexs);
+
     }
 
     @Override
